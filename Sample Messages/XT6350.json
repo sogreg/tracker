@@ -1,0 +1,18 @@
+{
+  "DeviceId": "872398705",
+  "DeviceType": "XT6350",
+  "MessageType": "Alert",
+  "EventTime": "2018-04-30T18:29:32Z",
+  "ReceiveTime": "2018-05-01T14:56:35.0906847Z",
+  "EpochTime": 1525186595,
+  "Body": "0100e509d2a71f31465641435844543648484844353838320b5ae7608c0c0802055130fafa166c0c6102f001000066db02f3d769000002ea0304002f005c",
+  "Latitude": 33.902896,
+  "Longitude": -84.273556,
+  "Speed": 0.621371192,
+  "Heading": "75.2",
+  "IgnitionOn": false,
+  "Properties": {
+    "Altitude": "316.9",
+    "RPM": "746"
+  }
+}

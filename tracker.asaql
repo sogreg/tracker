@@ -1,0 +1,60 @@
+﻿-- Retrieve current and previous tracking data
+with prevcurrent as
+(
+	select *, datediff(minute, eventtime, system.timestamp) age, speed, 
+	    preveventtime = lag(eventtime) over (partition by deviceid limit duration(hour, 4)),
+	    prevlatitude = lag(latitude) over (partition by deviceid limit duration(hour, 4)),
+	    prevlongitude = lag(longitude) over (partition by deviceid limit duration(hour, 4))
+	from [trackiothub] timestamp by eventtime
+	
+-- Filter messages without valid location
+	where latitude is not null and latitude != 0 and latitude >= -90 and latitude <= 90 and 
+		  longitude is not null and longitude != 0 and longitude >= -180 and longitude <= 180
+),
+-- Calculate distance between current and previous position
+sumstep as
+(
+	select *, 
+		st_distance(createpoint(latitude, longitude), 
+		createpoint(prevlatitude, prevlongitude)) distance
+	from prevcurrent
+),
+
+-- Report inactive trackers moving less than 400m every 2 hours (quarter of a mile) and with zero speed
+parked as (
+	select deviceid, 'parked' as movement, min(cast(eventtime as datetime)) firsteventtime, 
+		max(cast(eventtime as datetime)) lasteventtime, sum(distance) distancesum, 
+        max(cast(speed as bigint)) speedmax
+	from sumstep
+	group by deviceid, tumblingwindow(minute, 120)
+	having speedmax = 0 and distancesum < 400
+),
+
+-- Report active trackers moving more than 400m every 2 minutes or with recorded speed > 0
+moving as (
+	select deviceid, 'moving' as movement, min(cast(eventtime as datetime)) firsteventtime, 
+		max(cast(eventtime as datetime)) lasteventtime, sum(distance) distancesum, 
+        max(cast(speed as bigint)) speedmax
+	from sumstep
+	group by deviceid, tumblingwindow(minute, 2)
+	having speedmax > 0 or distancesum > 400
+),
+
+-- Collate active and inactive trackers with precedence to active
+parkedmoving as (
+	select * from moving union select * from parked
+),
+
+-- Join the original message with the data from above
+events as
+(
+	select i.deviceid, i.devicetype, i.messagetype, i.eventtime, i.receivetime, i.body, i.latitude,
+		i.longitude, i.speed, i.heading, i.ignitionon, i.properties, pm.movement, pm.speedmax, pm.distancesum 
+	from prevcurrent i 
+	inner join parkedmoving pm on datediff(minute, i, pm) between 0 and 120 -- should equal inactive window
+	and i.eventtime = pm.lasteventtime and pm.deviceid = i.deviceid
+)
+
+-- Insert the message into event hub 
+select * 
+from events;

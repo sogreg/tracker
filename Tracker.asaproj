@@ -1,0 +1,42 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>eca6aa23-2acb-4274-9dd0-46909eb9ac36</ProjectGuid>
+    <OutputType>File</OutputType>
+    <AssemblyName>Tracker</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <ASATargetsFilePath>$(AppData)\Microsoft\DataLake\MsBuild\1.0\StreamAnalytics.targets</ASATargetsFilePath>
+    <Name>Tracker</Name>
+    <RootNamespace>Tracker</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Script Include="tracker.asaql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Configure Include="input.json">
+      <SubType>Unknown</SubType>
+    </Configure>
+    <Configure Include="local_trackiothub.json">
+      <SubType>InputMock</SubType>
+    </Configure>
+    <Configure Include="Sample Messages\XT2050.json">
+      <SubType>Unknown</SubType>
+    </Configure>
+    <Configure Include="Sample Messages\XT6350.json">
+      <SubType>Unknown</SubType>
+    </Configure>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sample Messages" />
+  </ItemGroup>
+  <Import Project="$(ASATargetsFilePath)" />
+</Project>

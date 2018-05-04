@@ -1,0 +1,8 @@
+﻿{
+  "InputAlias": "trackiothub",
+  "Type": "Data Stream",
+  "Format": "Json",
+  "FilePath": "input.json",
+  "Sample": "{\r\n  \"DeviceId\": \"872398705\",\r\n  \"DeviceType\": \"XT6350\",\r\n  \"MessageType\": \"Alert\",\r\n  \"EventTime\": \"2018-04-30T18:29:32Z\",\r\n  \"ReceiveTime\": \"2018-05-01T14:56:35.0906847Z\",\r\n  \"EpochTime\": 1525186595,\r\n  \"Body\": \"0100e509d2a71f31465641435844543648484844353838320b5ae7608c0c0802055130fafa166c0c6102f001000066db02f3d769000002ea0304002f005c\",\r\n  \"Latitude\": 33.902896,\r\n  \"Longitude\": -84.273556,\r\n  \"Speed\": 0.621371192,\r\n  \"Heading\": \"75.2\",\r\n  \"IgnitionOn\": false,\r\n  \"Properties\": {\r\n    \"Altitude\": \"316.9\",\r\n    \"RPM\": \"746\"\r\n  }\r\n}",
+  "ScriptType": "InputMock"
+}
